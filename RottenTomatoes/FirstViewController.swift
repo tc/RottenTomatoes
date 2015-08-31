@@ -63,7 +63,10 @@ class FirstViewController: UIViewController {
     }
     
     func showErrorView() {
-        let errorLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 600))
+        self.stopLoadingAnimation()
+
+        let errorLabel = UILabel(frame: CGRectMake(self.view.frame.width / 2 - 100, 20, 200, 20))
+        errorLabel.backgroundColor = UIColor.grayColor()
         errorLabel.text = "Error Loading"
         self.tableView.addSubview(errorLabel)
     }
