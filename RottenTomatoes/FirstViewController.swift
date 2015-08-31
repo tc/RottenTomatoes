@@ -12,16 +12,21 @@ import UIKit
 class FirstViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var refreshControl:UIRefreshControl?
-    
+    let tumblrHUD = AMTumblrHud(frame: CGRectMake(150, 200, 55, 20))
+
     let rottenTomatoes = RottenTomatoesApi()
     var movies:NSArray = []
     
     override func viewDidLoad() {
+        self.title = "Box Office"
+            
         super.viewDidLoad()
+
+        self.tumblrHUD.frame = CGRectMake(self.view.frame.width / 2 - 50, self.view.frame.height / 2 - 20, 55, 20)
+        showLoadingAnimation()
         
         self.refreshControl = UIRefreshControl()
         self.refreshControl?.addTarget(self, action: "updateData", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.insertSubview(self.refreshControl!, atIndex:0)
         
         updateData()
     }
@@ -31,6 +36,16 @@ class FirstViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    //MARK - Animations
+    func showLoadingAnimation() {
+        self.view.addSubview(self.tumblrHUD)
+        self.tumblrHUD.showAnimated(true)
+    }
+
+    func stopLoadingAnimation() {
+        self.tumblrHUD.removeFromSuperview()
+    }
+    
     //MARK - Data
     func updateData() {
         rottenTomatoes.getBoxOffice({(movies:NSArray) in
@@ -38,7 +53,19 @@ class FirstViewController: UIViewController {
             
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
+            
+            self.stopLoadingAnimation()
+
+        }, errorCallback: {(error: NSError) in
+            println("error")
+            self.showErrorView()
         })
+    }
+    
+    func showErrorView() {
+        let errorLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 600))
+        errorLabel.text = "Error Loading"
+        self.tableView.addSubview(errorLabel)
     }
     
     //MARK - Table
@@ -59,6 +86,7 @@ class FirstViewController: UIViewController {
         let imageUrl = movie.valueForKeyPath("posters.thumbnail") as! String
         
         cell.textLabel?.text = title
+        cell.imageView?.image = UIImage(named:"first")
         cell.imageView?.setImageWithURL(NSURL(string:imageUrl)!)
         cell.textLabel?.numberOfLines = 0
         
@@ -71,6 +99,7 @@ class FirstViewController: UIViewController {
         let indexPath = tableView.indexPathForCell(sender as! UITableViewCell)!
         
         let movie = movies[indexPath.row] as! NSDictionary
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
         
         destinationView.movie = movie
     }

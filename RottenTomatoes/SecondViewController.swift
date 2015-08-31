@@ -10,9 +10,13 @@ import UIKit
 
 // Top DVD View
 class SecondViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let tumblrHUD = AMTumblrHud(frame: CGRectMake(100, 100, 55, 20))
+        self.view.addSubview(tumblrHUD)
+        tumblrHUD.showAnimated(true)
+
         // Do any additional setup after loading the view, typically from a nib.
     }
 
