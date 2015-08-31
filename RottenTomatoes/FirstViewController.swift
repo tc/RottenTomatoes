@@ -28,6 +28,10 @@ class FirstViewController: UIViewController {
         self.refreshControl = UIRefreshControl()
         self.refreshControl?.addTarget(self, action: "updateData", forControlEvents: UIControlEvents.ValueChanged)
         
+        if let c = self.refreshControl {
+            self.tableView.insertSubview(c, atIndex: 0)
+        }
+        
         updateData()
     }
 
